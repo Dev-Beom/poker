@@ -8,23 +8,29 @@ import org.junit.jupiter.api.Test
 
 
 class BadugiCardSetTest {
-    private val badugiCore = BadugiCore()
-
     @Test
     fun `genealogy - ALL`() {
         assertDoesNotThrow(
             {
                 val cardSets = listOf(
+                    BadugiCardSet.from(listOf(SPADE at 1, CLUB at 4, DIAMOND at 5, DIAMOND at 6)),
+                    BadugiCardSet.from(listOf(SPADE at 1, CLUB at 1, DIAMOND at 5, DIAMOND at 6)),
                     BadugiCardSet.from(listOf(CLUB at 1, HEART at 2, DIAMOND at 3, SPADE at 4)),
                     BadugiCardSet.from(listOf(CLUB at 1, HEART at 2, DIAMOND at 3, SPADE at 5)),
                     BadugiCardSet.from(listOf(CLUB at 1, HEART at 2, DIAMOND at 4, SPADE at 5)),
-                    BadugiCardSet.from(listOf(SPADE at 1, CLUB at 4, DIAMOND at 5, HEART at 6)),
-                    BadugiCardSet.from(listOf(SPADE at 1, CLUB at 4, DIAMOND at 5, DIAMOND at 6)),
-                    BadugiCardSet.from(listOf(SPADE at 1, CLUB at 1, DIAMOND at 5, DIAMOND at 6)),
                     BadugiCardSet.from(listOf(SPADE at 1, SPADE at 2, SPADE at 3, SPADE at 4)),
-                    BadugiCardSet.from(listOf(SPADE at 1, CLUB at 1, DIAMOND at 1, HEART at 1))
+                    BadugiCardSet.from(listOf(SPADE at 1, CLUB at 1, DIAMOND at 1, HEART at 1)),
+                    BadugiCardSet.from(listOf(SPADE at 1, CLUB at 4, DIAMOND at 5, HEART at 6))
                 )
-                cardSets.sortedDescending().forEach { println(it) }
+                val result = cardSets.sortedDescending()
+                assertThat(result[0].genealogy).isSameAs(BadugiGenealogy.GOLF)
+                assertThat(result[1].genealogy).isSameAs(BadugiGenealogy.SECOND)
+                assertThat(result[2].genealogy).isSameAs(BadugiGenealogy.THIRD)
+                assertThat(result[3].genealogy).isSameAs(BadugiGenealogy.MADE)
+                assertThat(result[4].genealogy).isSameAs(BadugiGenealogy.BASE)
+                assertThat(result[5].genealogy).isSameAs(BadugiGenealogy.TWO_BASE)
+                assertThat(result[6].genealogy).isSameAs(BadugiGenealogy.NONE_TOP)
+                assertThat(result[7].genealogy).isSameAs(BadugiGenealogy.NONE_TOP)
             },
             "바둑이 족보"
         )

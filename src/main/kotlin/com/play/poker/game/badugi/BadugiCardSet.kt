@@ -21,10 +21,7 @@ class BadugiCardSet(
     }
 
     private val display: String? = when (genealogy) {
-        MADE -> getCombinations(4).sortedBy { it.number }.toString()
-        BASE -> getCombinations(3).sortedBy { it.number }.toString()
-        TWO_BASE -> getCombinations(2).sortedBy { it.number }.toString()
-        NONE_TOP -> getCombinations(1).sortedBy { it.number }.toString()
+        MADE, BASE, TWO_BASE, NONE_TOP -> getCombinations(genealogy.effectiveCount).sortedBy { it.number }.toString()
         else -> null
     }
 
@@ -32,15 +29,7 @@ class BadugiCardSet(
         return when {
             genealogy.priority < other.genealogy.priority -> 1
             genealogy.priority > other.genealogy.priority -> -1
-            else -> {
-                return when (genealogy) {
-                    MADE -> samePriorityCompareTo(other, 4)
-                    BASE -> samePriorityCompareTo(other, 3)
-                    TWO_BASE -> samePriorityCompareTo(other, 2)
-                    NONE_TOP -> samePriorityCompareTo(other, 1)
-                    else -> 0
-                }
-            }
+            else -> samePriorityCompareTo(other)
         }
     }
 
@@ -48,9 +37,9 @@ class BadugiCardSet(
         return cards.joinToString(separator = ", ") { "${it.suit} ${it.display}" } + " | $genealogy ${display ?: ""}"
     }
 
-    private fun BadugiCardSet.samePriorityCompareTo(other: BadugiCardSet, countOfCard: Int): Int {
-        val currentBinary = getCombinations(countOfCard).toBinary()
-        val otherBinary = other.getCombinations(countOfCard).toBinary()
+    private fun BadugiCardSet.samePriorityCompareTo(other: BadugiCardSet): Int {
+        val currentBinary = getCombinations(this.genealogy.effectiveCount).toBinary()
+        val otherBinary = other.getCombinations(this.genealogy.effectiveCount).toBinary()
         return when {
             currentBinary < otherBinary -> 1
             currentBinary > otherBinary -> -1
@@ -96,7 +85,7 @@ class BadugiCardSet(
         return combinations.any { it.isAllDiffNumber() && it.isAllDiffSuit() }
     }
 
-    fun getCombinations(countOfCard: Int): List<Card> {
+    private fun getCombinations(countOfCard: Int): List<Card> {
         return Combination.combinations(cards, countOfCard)
             .filter { it.isAllDiffNumber() && it.isAllDiffSuit() }
             .map { combination -> combination.sortedByDescending { it.number } }
