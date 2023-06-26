@@ -52,31 +52,31 @@ class BadugiCardSet(
         return cards.joinToString(separator = "") { it.display }
     }
 
-    private fun BadugiCardSet.isGolf(): Boolean {
+    private fun isGolf(): Boolean {
         return isMade() && matchOf("A234")
     }
 
-    private fun BadugiCardSet.isSecond(): Boolean {
+    private fun isSecond(): Boolean {
         return isMade() && matchOf("A235")
     }
 
-    private fun BadugiCardSet.isThird(): Boolean {
+    private fun isThird(): Boolean {
         return isMade() && matchOf("A245")
     }
 
-    private fun BadugiCardSet.isMade(): Boolean {
+    private fun isMade(): Boolean {
         return cards.isAllDiffNumber() && cards.isAllDiffSuit()
     }
 
-    private fun BadugiCardSet.isBase(): Boolean {
-        return !isMade() && cards.isDiffNumberAndSuitFor(3)
+    private fun isBase(): Boolean {
+        return !isMade() && cards.isDiffNumberAndSuitFor(BASE.effectiveCount)
     }
 
-    private fun BadugiCardSet.isTwoBase(): Boolean {
-        return !isMade() && cards.isDiffNumberAndSuitFor(2)
+    private fun isTwoBase(): Boolean {
+        return !isMade() && cards.isDiffNumberAndSuitFor(TWO_BASE.effectiveCount)
     }
 
-    private fun BadugiCardSet.isNoneTop(): Boolean {
+    private fun isNoneTop(): Boolean {
         return cards.isAllSameNumber() || cards.isAllSameSuit()
     }
 
@@ -116,7 +116,7 @@ class BadugiCardSet(
         return count { it.suit == first().suit } == size
     }
 
-    private fun BadugiCardSet.matchOf(string: String): Boolean {
+    private fun matchOf(string: String): Boolean {
         return this.toBinaryString() == string
     }
 
