@@ -1,25 +1,64 @@
 package com.play.poker.game.badugi
 
+import com.play.poker.game.badugi.BadugiGenealogy.*
 import com.play.poker.util.Combination
 import com.play.poker.value.Card
 
 class BadugiCardSet(
     private val cards: List<Card>,
-) {
-    val genealogy: BadugiGenealogy by lazy {
-        when {
-            isGolf() -> BadugiGenealogy.GOLF
-            isSecond() -> BadugiGenealogy.SECOND
-            isThird() -> BadugiGenealogy.THIRD
-            isMade() -> BadugiGenealogy.MADE
-            isBase() -> BadugiGenealogy.BASE
-            isTwoBase() -> BadugiGenealogy.TWO_BASE
-            isNoneTop() -> BadugiGenealogy.NONE_TOP
-            else -> throw Exception("badugi card set get genealogy exception.")
+) : Comparable<BadugiCardSet> {
+    private val descOrderedCards: List<Card> = cards.sortedByDescending { it.number }
+
+    val genealogy: BadugiGenealogy = when {
+        isGolf() -> GOLF
+        isSecond() -> SECOND
+        isThird() -> THIRD
+        isMade() -> MADE
+        isBase() -> BASE
+        isTwoBase() -> TWO_BASE
+        isNoneTop() -> NONE_TOP
+        else -> throw Exception("badugi card set get genealogy exception.")
+    }
+
+    private val display: String? = when (genealogy) {
+        MADE -> getCombinations(4).sortedBy { it.number }.toString()
+        BASE -> getCombinations(3).sortedBy { it.number }.toString()
+        TWO_BASE -> getCombinations(2).sortedBy { it.number }.toString()
+        NONE_TOP -> getCombinations(1).sortedBy { it.number }.toString()
+        else -> null
+    }
+
+    override fun compareTo(other: BadugiCardSet): Int {
+        return when {
+            genealogy.priority < other.genealogy.priority -> 1
+            genealogy.priority > other.genealogy.priority -> -1
+            else -> {
+                return when (genealogy) {
+                    MADE -> samePriorityCompareTo(other, 4)
+                    BASE -> samePriorityCompareTo(other, 3)
+                    TWO_BASE -> samePriorityCompareTo(other, 2)
+                    NONE_TOP -> samePriorityCompareTo(other, 1)
+                    else -> 0
+                }
+            }
         }
     }
 
     override fun toString(): String {
+        return cards.joinToString(separator = ", ") { "${it.suit} ${it.display}" } + " | $genealogy ${display ?: ""}"
+    }
+
+    private fun BadugiCardSet.samePriorityCompareTo(other: BadugiCardSet, countOfCard: Int): Int {
+        val currentBinary = getCombinations(countOfCard).toBinary()
+        val otherBinary = other.getCombinations(countOfCard).toBinary()
+        return when {
+            currentBinary < otherBinary -> 1
+            currentBinary > otherBinary -> -1
+            else -> 0
+        }
+    }
+
+    private fun toBinaryString(): String {
         check(cards.size == FIXED_CARD_SIZE) { "badugi card set size exception." }
         return cards.joinToString(separator = "") { it.display }
     }
@@ -29,7 +68,6 @@ class BadugiCardSet(
     }
 
     private fun BadugiCardSet.isSecond(): Boolean {
-        println(this.cards.toString())
         return isMade() && matchOf("A235")
     }
 
@@ -58,6 +96,21 @@ class BadugiCardSet(
         return combinations.any { it.isAllDiffNumber() && it.isAllDiffSuit() }
     }
 
+    fun getCombinations(countOfCard: Int): List<Card> {
+        return Combination.combinations(cards, countOfCard)
+            .filter { it.isAllDiffNumber() && it.isAllDiffSuit() }
+            .map { combination -> combination.sortedByDescending { it.number } }
+            .findMinCombination()
+    }
+
+    private fun List<List<Card>>.findMinCombination(): List<Card> {
+        return this.minByOrNull { it.toBinary() } ?: emptyList()
+    }
+
+    private fun List<Card>.toBinary(): Int {
+        return this.map { it.number }.joinToString("").toIntOrNull() ?: 0
+    }
+
     private fun List<Card>.isAllDiffNumber(): Boolean {
         return none { card -> count { it.number == card.number } != 1 }
     }
@@ -75,7 +128,7 @@ class BadugiCardSet(
     }
 
     private fun BadugiCardSet.matchOf(string: String): Boolean {
-        return this.toString() == string
+        return this.toBinaryString() == string
     }
 
     companion object {

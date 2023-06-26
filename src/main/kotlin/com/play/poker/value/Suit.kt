@@ -26,5 +26,9 @@ enum class Suit(
         symbol = "♣",
         displayName = "클로바",
         color = Color.black
-    )
+    );
+
+    override fun toString(): String {
+        return this.symbol
+    }
 }

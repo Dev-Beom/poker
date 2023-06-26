@@ -11,6 +11,26 @@ class BadugiCardSetTest {
     private val badugiCore = BadugiCore()
 
     @Test
+    fun `genealogy - ALL`() {
+        assertDoesNotThrow(
+            {
+                val cardSets = listOf(
+                    BadugiCardSet.from(listOf(CLUB at 1, HEART at 2, DIAMOND at 3, SPADE at 4)),
+                    BadugiCardSet.from(listOf(CLUB at 1, HEART at 2, DIAMOND at 3, SPADE at 5)),
+                    BadugiCardSet.from(listOf(CLUB at 1, HEART at 2, DIAMOND at 4, SPADE at 5)),
+                    BadugiCardSet.from(listOf(SPADE at 1, CLUB at 4, DIAMOND at 5, HEART at 6)),
+                    BadugiCardSet.from(listOf(SPADE at 1, CLUB at 4, DIAMOND at 5, DIAMOND at 6)),
+                    BadugiCardSet.from(listOf(SPADE at 1, CLUB at 1, DIAMOND at 5, DIAMOND at 6)),
+                    BadugiCardSet.from(listOf(SPADE at 1, SPADE at 2, SPADE at 3, SPADE at 4)),
+                    BadugiCardSet.from(listOf(SPADE at 1, CLUB at 1, DIAMOND at 1, HEART at 1))
+                )
+                cardSets.sortedDescending().forEach { println(it) }
+            },
+            "바둑이 족보"
+        )
+    }
+
+    @Test
     fun `getGenealogy - GOLF`() {
         assertDoesNotThrow(
             {
@@ -72,6 +92,29 @@ class BadugiCardSetTest {
                 assertThat(cardSet.genealogy).isSameAs(BadugiGenealogy.BASE)
             },
             "베이스는 메이드가 아닌 패 중에서 1장을 제외하면 나머지 3장의 무늬와 숫자가 모두 다른 경우이다."
+        )
+        assertDoesNotThrow(
+            {
+                val cardSet1 = BadugiCardSet.from(
+                    cards = listOf(SPADE at 1, CLUB at 2, DIAMOND at 3, DIAMOND at 4)
+                )
+                val cardSet2 = BadugiCardSet.from(
+                    cards = listOf(SPADE at 1, CLUB at 2, DIAMOND at 3, HEART at 3)
+                )
+                val cardSet3 = BadugiCardSet.from(
+                    cards = listOf(CLUB at 5, SPADE at 7, HEART at 13, HEART at 10)
+                )
+                val cardSet4 = BadugiCardSet.from(
+                    cards = listOf(SPADE at 9, DIAMOND at 10, HEART at 2, DIAMOND at 5)
+                )
+                val cardSet5 = BadugiCardSet.from(
+                    cards = listOf(HEART at 1, SPADE at 5, HEART at 7, DIAMOND at 8)
+                )
+                listOf(cardSet1, cardSet2, cardSet3, cardSet4, cardSet5).sortedDescending()
+                    .forEach { println(it) }
+            },
+            "무늬가 같은 경우엔 조합 중에서 가장 높은 패가 제외된다." +
+                    "숫자가 같은 경우엔 조합 중에서 가장 중복이 없는 패가 제외된다."
         )
     }
 

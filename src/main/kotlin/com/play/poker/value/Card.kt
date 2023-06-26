@@ -14,4 +14,8 @@ data class Card(
                 else -> number.toString()
             }
         }
+
+    override fun toString(): String {
+        return "${this.suit} ${this.number}"
+    }
 }
