@@ -1,15 +1,17 @@
-package com.play.poker.game.badugi
+package com.play.poker.game.badugi.domain
 
-import com.play.poker.game.badugi.BadugiGenealogy.*
+import com.play.poker.game.badugi.enum.Genealogy
+import com.play.poker.game.badugi.enum.Genealogy.*
 import com.play.poker.util.Combination
 import com.play.poker.value.Card
+import java.io.Serializable
 
-class BadugiCardSet(
+class CardSet(
     private val cards: List<Card>,
-) : Comparable<BadugiCardSet> {
+) : Comparable<CardSet>, Serializable {
     private val descOrderedCards: List<Card> = cards.sortedByDescending { it.number }
 
-    val genealogy: BadugiGenealogy = when {
+    val genealogy: Genealogy = when {
         isGolf() -> GOLF
         isSecond() -> SECOND
         isThird() -> THIRD
@@ -25,7 +27,7 @@ class BadugiCardSet(
         else -> null
     }
 
-    override fun compareTo(other: BadugiCardSet): Int {
+    override fun compareTo(other: CardSet): Int {
         return when {
             genealogy.priority < other.genealogy.priority -> 1
             genealogy.priority > other.genealogy.priority -> -1
@@ -37,7 +39,7 @@ class BadugiCardSet(
         return cards.joinToString(separator = ", ") { "${it.suit} ${it.display}" } + " | $genealogy ${display ?: ""}"
     }
 
-    private fun BadugiCardSet.samePriorityCompareTo(other: BadugiCardSet): Int {
+    private fun samePriorityCompareTo(other: CardSet): Int {
         val currentBinary = getCombinations(this.genealogy.effectiveCount).toBinary()
         val otherBinary = other.getCombinations(this.genealogy.effectiveCount).toBinary()
         return when {
@@ -123,10 +125,10 @@ class BadugiCardSet(
     companion object {
         private const val FIXED_CARD_SIZE = 4
 
-        fun from(cards: List<Card>): BadugiCardSet {
+        fun from(cards: List<Card>): CardSet {
             check(cards.size == FIXED_CARD_SIZE) { "badugi card set size exception." }
             val sortedCards = cards.sortedBy { it.number }
-            return BadugiCardSet(sortedCards)
+            return CardSet(sortedCards)
         }
     }
 }

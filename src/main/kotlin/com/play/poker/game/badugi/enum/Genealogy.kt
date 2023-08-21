@@ -1,6 +1,6 @@
-package com.play.poker.game.badugi
+package com.play.poker.game.badugi.enum
 
-enum class BadugiGenealogy(
+enum class Genealogy(
     val title: String,
     val priority: Int,
     val effectiveCount: Int,

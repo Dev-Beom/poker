@@ -1,9 +1,14 @@
 package com.play.poker.value
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
+import java.io.Serializable
+
+
+@JsonIgnoreProperties(ignoreUnknown = true)
 data class Card(
     val number: Int,
     val suit: Suit
-) {
+): Serializable {
     val display: String
         get() {
             return when (number) {
@@ -17,5 +22,9 @@ data class Card(
 
     override fun toString(): String {
         return "${this.suit} ${this.number}"
+    }
+
+    companion object {
+        fun sets(suit: Suit) = (1..13).map { Card(number = it, suit) }
     }
 }
