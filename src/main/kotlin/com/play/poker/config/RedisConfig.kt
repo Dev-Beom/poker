@@ -39,6 +39,7 @@ class RedisConfig(
     @Bean
     fun badugiCardStoreRedisTemplate(): RedisTemplate<*, *> {
         return RedisTemplate<Any, Any>().apply {
+            this.setEnableTransactionSupport(true)
             this.connectionFactory = redisConnectionFactory()
             this.keySerializer = StringRedisSerializer()
             this.valueSerializer = Jackson2JsonRedisSerializer(jacksonObjectMapper(), BadugiGame::class.java)
