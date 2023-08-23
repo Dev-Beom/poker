@@ -1,6 +1,6 @@
 package com.play.poker.game.badugi
 
-import com.play.poker.common.CommonException
+import com.play.poker.common.exception.CommonException
 import com.play.poker.game.GameService
 import com.play.poker.game.badugi.domain.BadugiGame
 import com.play.poker.game.badugi.domain.BadugiUser
