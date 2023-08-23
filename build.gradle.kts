@@ -28,6 +28,7 @@ dependencies {
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.springframework.boot:spring-boot-starter-data-redis:3.1.1")
+    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.15.2")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     runtimeOnly("com.mysql:mysql-connector-j:8.0.32")
 }
